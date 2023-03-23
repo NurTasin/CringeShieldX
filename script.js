@@ -85,10 +85,13 @@
             if(overlay_){
                 overlay_.remove();
             }
-            if (location.href.startsWith("https://www.youtube.com/watch?")) {
+            if (location.href.startsWith("https://www.youtube.com/watch?") || location.href.startsWith("https://youtube.com/watch?")) {
                 CringeDetector();
             }
         }
     }, 1000);
+    if(location.href.startsWith("https://www.youtube.com/watch?") || location.href.startsWith("https://youtube.com/watch?")){
+        CringeDetector();
+    }
     console.log("CringeShieldX Loaded!")
 })();
