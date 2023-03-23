@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CringeShieldX
 // @namespace    http://github.com/NurTasin
-// @version      1.0 (Beta)
+// @version      1.0
 // @description  Filters Out The Cringe (Or Inappropriate) Side Of Youtube
 // @author       NurTasin (@nurtasin)
 // @match        https://www.youtube.com/*
@@ -19,8 +19,8 @@
         "method": "GET"
     })
         .then(response => response.json())
-        .then(data => DB = data)
-        .catch(err => console.log(err))
+        .then(data => {DB = data;console.log("CringeShieldX DB Loaded!")})
+        .catch(err => console.log(err));
     function ForcePause() {
         document.getElementsByTagName("video")[0].onplay = (elem) => elem.target.pause();
     }
@@ -37,12 +37,13 @@
         return false;
     }
     function CringeDetector() {
-        setTimeout(() => {
+        document.getElementsByTagName("video")[0].onplay= () => {
             const ChannelName = document.getElementById("owner").getElementsByClassName("yt-core-attributed-string__link yt-core-attributed-string__link--display-type yt-core-attributed-string__link--call-to-action-color yt-core-attributed-string--link-inherit-color")[0].innerText;
             const VideoTitle = document.querySelector('.ytd-video-primary-info-renderer h1.title') ? document.querySelector('.ytd-video-primary-info-renderer h1.title').textContent.trim() : '';
             if (DB.channels.includes(ChannelName) || IsTitleUnsafe(VideoTitle.toLowerCase())) {
                 //blocks the content from playing back
-                ForcePause();
+                document.getElementsByTagName("video")[0].pause();
+                document.getElementsByTagName("video")[0].onplay = (elem) => elem.target.pause();
                 const overlay = document.createElement("div");
                 overlay.setAttribute("id", "cringeshieldx-overlay");
                 overlay.textContent = "This content is blocked by CringeShieldX";
@@ -68,14 +69,14 @@
                 watchAnywayBtn.style.cursor = "pointer";
                 watchAnywayBtn.onclick=(ev)=>{
                     overlay.remove();
-                    RevokeForcePause();
+                    document.getElementsByTagName("video")[0].onplay = null;
                 }
                 overlay.appendChild(document.createElement("br"));
                 overlay.appendChild(document.createElement("br"));
                 overlay.appendChild(watchAnywayBtn);
                 document.body.appendChild(overlay);
             }
-        }, 3000);
+        }
     }
     setInterval(function () {
         if (location.href !== PreviousURL) {
@@ -89,4 +90,5 @@
             }
         }
     }, 1000);
+    console.log("CringeShieldX Loaded!")
 })();
